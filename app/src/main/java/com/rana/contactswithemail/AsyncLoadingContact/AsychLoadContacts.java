@@ -1,10 +1,12 @@
-package com.rana.contactswithemail.AsyncLoadingContact;
+package com.rana.contactswithemail.asyncloadingcontact;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
@@ -89,27 +91,33 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
             do {
                 // names comes in hand sometimes
 
-                String name = cur.getString(1);
+
                 String photoId = cur.getString(2);
+
+                String name = cur.getString(1);
                 String emailAddress = cur.getString(3);
-                String contactId = cur.getString(4);
+                long contactId = cur.getLong(4);
+
 //                    String phoneNo = cur.getString(5);
+                String photoUri = null;
+                if (photoId != null) {
+                    photoUri = this.displayPhotoUri(this.context, contactId).toString();
+                }
 
 
                 Log.e("NAME ", name + "");
-                Log.e("PHOTO ", photoId + "");
+                Log.e("PHOTO ", photoUri + "");
                 Log.e("EMAIL ", emailAddress + "");
-                Log.e("PHONE ", getContactNumber(context, contactId) + "");
+                Log.e("PHONE ", getContactNumber(context, String.valueOf(contactId)) + "");
+
 
                 // keep unique only
                 if (emailAddress != null && !emailAddress.equals("")) {
                     if (emlRecsHS.add(emailAddress.toLowerCase())) {
                         emlRecs.add(emailAddress);
                     }
-//                        if (phoneNo != null && phoneNo.equals("")) {
-//                            Log.e("Some", getLastCallLog(context, phoneNo));
-//                        }
-                    String phoneNumber = getContactNumber(context, contactId);
+
+                    String phoneNumber = getContactNumber(context, String.valueOf(contactId));
                     long timeLastCalled = getLastCallLog(context, phoneNumber);
                     String timeFormated = "";
                     if (timeLastCalled != 0) {
@@ -118,8 +126,9 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
                         timeFormated = "No call log!";
                     }
 
-                    Contact contact = new Contact(phoneNumber, emailAddress, name, photoId, timeFormated);
+                    Contact contact = new Contact(phoneNumber, emailAddress, name, photoUri, timeFormated);
                     contactArrayList.add(contact);
+
                 } else {
                     //don't have any email address
                 }
@@ -171,6 +180,12 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
             pCur.close();
         }
         return numberPhone;
+    }
+
+
+    public Uri displayPhotoUri(Context context, long contactId) {
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+        return Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.DISPLAY_PHOTO);
     }
 }
 

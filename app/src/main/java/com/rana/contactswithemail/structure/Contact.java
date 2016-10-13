@@ -13,14 +13,15 @@ public class Contact {
     private String mobile;
     private String email;
     private String name;
-    private String photoId;
+    private String photoUri;
+
     private String lastContactTime;
 
-    public Contact(String mobile, String email, String name, String photoId, String lastContactTime) {
+    public Contact(String mobile, String email, String name, String photoUri, String lastContactTime) {
         this.mobile = mobile;
         this.email = email;
         this.name = name;
-        this.photoId = photoId;
+        this.photoUri = photoUri;
         this.lastContactTime = lastContactTime;
     }
 
@@ -33,12 +34,12 @@ public class Contact {
         this.lastContactTime = lastContactTime;
     }
 
-    public String getPhotoId() {
-        return photoId;
+    public String getPhotoUri() {
+        return photoUri;
     }
 
-    public void setPhotoId(String photoId) {
-        this.photoId = photoId;
+    public void setPhotoUri(String photoUri) {
+        this.photoUri = photoUri;
     }
 
     public String getName() {
@@ -64,4 +65,5 @@ public class Contact {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }
