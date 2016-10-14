@@ -19,7 +19,9 @@
             android:id="@+id/contact_avatar"
             android:layout_width="72dp"
             android:layout_height="72dp"
+            android:layout_marginLeft="7dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="7dp"
             android:contentDescription="Avatar"
             android:scaleType="fitXY"
             android:src="@mipmap/ic_launcher" />
@@ -29,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/contact_avatar"
+            android:padding="7dp"
             android:text="Sandeep Rana"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -39,6 +42,10 @@
             android:layout_below="@+id/contact_name"
             android:layout_toRightOf="@+id/contact_avatar"
             android:autoLink="phone"
+            android:drawableLeft="@drawable/ic_call_black_24dp"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorAccent"
+            android:padding="7dp"
             android:text="+918439740563" />
 
         <TextView
@@ -48,14 +55,22 @@
             android:layout_below="@id/contact_number"
             android:layout_toRightOf="@+id/contact_avatar"
             android:autoLink="email"
+            android:drawableLeft="@drawable/ic_email_black_24dp"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorAccent"
+            android:paddingBottom="7dp"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
             android:text="sandeep.rana011@gmail.com" />
 
         <TextView
             android:id="@+id/contact_lastcall"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/contact_email"
-            android:layout_toRightOf="@+id/contact_avatar"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/contact_email"
+            android:drawableLeft="@drawable/ic_call_made_black_24dp"
+            android:drawablePadding="7dp"
             android:text="2016 Oct 12, 12:10 AM" />
 
     </RelativeLayout>

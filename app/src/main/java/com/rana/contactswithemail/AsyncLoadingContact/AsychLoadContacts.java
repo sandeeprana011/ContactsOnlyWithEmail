@@ -166,7 +166,7 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
 
     private String getContactNumber(Context context, String contactId) {
 
-        String numberPhone = "";
+        String numberPhone = "phone not available!";
         Cursor pCur = this.context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
