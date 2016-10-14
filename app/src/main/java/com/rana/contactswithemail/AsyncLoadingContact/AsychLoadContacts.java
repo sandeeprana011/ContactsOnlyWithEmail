@@ -62,11 +62,12 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
         }
     }
 
-    public ArrayList<Contact> getContactDetails() {
+    private ArrayList<Contact> getContactDetails() {
         ArrayList<Contact> contactArrayList = new ArrayList<>();
         ArrayList<String> emlRecs = new ArrayList<String>();
         HashSet<String> emlRecsHS = new HashSet<String>();
 
+        this.onProgressUpdate("Preparing...");
 
         Context context = this.context;
         ContentResolver cr = context.getContentResolver();
@@ -86,6 +87,7 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
                 + " COLLATE NOCASE";
         String filter = ContactsContract.CommonDataKinds.Email.DATA + " NOT LIKE ''";
 
+        this.onProgressUpdate("Reading Contacts...");
         Cursor cur = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, projectionArray, filter, null, order);
         if (cur != null && cur.moveToFirst()) {
             do {
@@ -100,6 +102,7 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
 
 //                    String phoneNo = cur.getString(5);
                 String photoUri = null;
+                this.onProgressUpdate("Loading\n\n" + name);
                 if (photoId != null) {
                     photoUri = this.displayPhotoUri(this.context, contactId).toString();
                 }

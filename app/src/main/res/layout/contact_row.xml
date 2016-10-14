@@ -1,46 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/card_view"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:elevation="10dp">
 
-    <ImageView
-        android:id="@+id/contact_avatar"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:scaleType="fitXY"
-        android:src="@mipmap/ic_launcher" />
-
-    <TextView
-        android:id="@+id/contact_name"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/contact_avatar"
-        android:text="Sandeep Rana" />
+        android:layout_gravity="center"
+        android:elevation="10dp"
+        android:padding="7dp">
 
-    <TextView
-        android:id="@+id/contact_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/contact_name"
-        android:layout_toRightOf="@+id/contact_avatar"
-        android:text="+918439740563" />
+        <ImageView
+            android:id="@+id/contact_avatar"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginRight="10dp"
+            android:contentDescription="Avatar"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
 
-    <TextView
-        android:id="@+id/contact_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/contact_number"
-        android:layout_toRightOf="@+id/contact_avatar"
-        android:text="sandeep.rana011@gmail.com" />
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/contact_avatar"
+            android:text="Sandeep Rana"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/contact_lastcall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/contact_email"
-        android:layout_toRightOf="@+id/contact_avatar"
-        android:text="2016 Oct 12, 12:10 AM" />
+        <TextView
+            android:id="@+id/contact_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/contact_name"
+            android:layout_toRightOf="@+id/contact_avatar"
+            android:autoLink="phone"
+            android:text="+918439740563" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/contact_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contact_number"
+            android:layout_toRightOf="@+id/contact_avatar"
+            android:autoLink="email"
+            android:text="sandeep.rana011@gmail.com" />
+
+        <TextView
+            android:id="@+id/contact_lastcall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contact_email"
+            android:layout_toRightOf="@+id/contact_avatar"
+            android:text="2016 Oct 12, 12:10 AM" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

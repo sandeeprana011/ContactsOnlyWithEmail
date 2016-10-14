@@ -8,6 +8,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.rana.contactswithemail.adapters.ContactListAdapter;
 import com.rana.contactswithemail.asyncloadingcontact.AsychLoadContacts;
@@ -20,6 +24,9 @@ public class MainActivity extends AppCompatActivity implements ListenerCallBacks
 
     private static final int CONTACTS_PERMISSION_REQUEST = 12;
     RecyclerView recyclerView;
+    RelativeLayout loaderLayout;
+    ProgressBar progressBar;
+    TextView textViewStatusLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements ListenerCallBacks
         setContentView(R.layout.activity_main);
         this.checkForPermissionAndRequestPermission();
         recyclerView = (RecyclerView) findViewById(R.id.rv_contacts);
+        loaderLayout = (RelativeLayout) findViewById(R.id.rv_loader_view);
+        progressBar = (ProgressBar) findViewById(R.id.pb_progressbar);
+        textViewStatusLoading = (TextView) findViewById(R.id.tv_progress_status);
 
         AsychLoadContacts asychLoadContacts = new AsychLoadContacts(this, this);
         asychLoadContacts.execute();
@@ -54,12 +64,24 @@ public class MainActivity extends AppCompatActivity implements ListenerCallBacks
     }
 
     @Override
-    public void onUiUpdate(String[] values) {
+    public void onUiUpdate(final String[] values) {
+        if (values.length > 0 && values[0] != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textViewStatusLoading.setText(values[0]);
+                }
+            });
 
+        }
     }
 
     @Override
     public void onPostUiCalled(ArrayList<Contact> contactArrayList) {
+        if (loaderLayout != null) {
+            loaderLayout.setVisibility(View.GONE);
+        }
+
         if (contactArrayList != null) {
             ContactListAdapter listAdapter = new ContactListAdapter(this, contactArrayList);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));

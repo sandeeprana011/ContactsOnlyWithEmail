@@ -1,6 +1,9 @@
 package com.rana.contactswithemail.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.rana.contactswithemail.R;
 import com.rana.contactswithemail.structure.Contact;
 
@@ -41,7 +45,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ContactListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final ContactListAdapter.ViewHolder holder, int position) {
         Contact contact = this.contactArrayList.get(position);
 //        holder.iAvatar.setText(contact.get());
 
@@ -50,12 +54,18 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         Glide
                 .with(this.context)
                 .load(contact.getPhotoUri())
+                .asBitmap()
                 .centerCrop()
-                .override(250, 250)
-                .placeholder(R.mipmap.ic_launcher)
-                .crossFade()
-                .into(holder.iAvatar);
-
+                .placeholder(R.drawable.avatar)
+                .into(new BitmapImageViewTarget(holder.iAvatar) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(context.getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        holder.iAvatar.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
 
         holder.tName.setText(contact.getName());
         holder.tEmail.setText(contact.getEmail());
