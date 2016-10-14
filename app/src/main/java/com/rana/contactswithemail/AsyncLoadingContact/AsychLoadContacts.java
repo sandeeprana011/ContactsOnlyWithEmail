@@ -124,7 +124,7 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
                     long timeLastCalled = getLastCallLog(context, phoneNumber);
                     String timeFormated = "";
                     if (timeLastCalled != 0) {
-                        timeFormated = new SimpleDateFormat("yyyy-MMM-dd HH:mm", Locale.getDefault()).format(new Date());
+                        timeFormated = new SimpleDateFormat("E dd MMM yyyy hh:mm:ss a", Locale.getDefault()).format(new Date());
                     } else {
                         timeFormated = "No call log!";
                     }
