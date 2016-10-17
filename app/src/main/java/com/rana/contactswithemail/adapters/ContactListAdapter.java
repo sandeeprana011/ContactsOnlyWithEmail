@@ -80,6 +80,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         return this.contactArrayList.size();
     }
 
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView iAvatar;
@@ -94,4 +95,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             tLastCall = (TextView) itemView.findViewById(R.id.contact_lastcall);
         }
     }
+
+
 }

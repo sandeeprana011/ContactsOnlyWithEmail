@@ -18,6 +18,8 @@ import com.rana.contactswithemail.structure.Contact;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
@@ -114,6 +116,33 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
                 Log.e("PHONE ", getContactNumber(context, String.valueOf(contactId)) + "");
 
 
+                String birthdayColumns[] = {
+                        ContactsContract.CommonDataKinds.Event.START_DATE,
+                        ContactsContract.CommonDataKinds.Event.TYPE,
+                        ContactsContract.CommonDataKinds.Event.MIMETYPE,
+                };
+
+
+                String birthdayProj = ContactsContract.CommonDataKinds.Event.TYPE + "=" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY +
+                        " and " + ContactsContract.CommonDataKinds.Event.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE + "' and " + ContactsContract.Data.CONTACT_ID + " = " + contactId;
+
+//                String[] selectionArgs = null;
+                String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
+
+
+                /**
+                 * Evaluating Birhtday
+                 */
+                String birthday = null;
+
+                Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, birthdayColumns, birthdayProj, null, sortOrder);
+                if (birthdayCur.getCount() > 0) {
+                    while (birthdayCur.moveToNext()) {
+                        birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
+                    }
+                }
+
+
                 // keep unique only
                 if (emailAddress != null && !emailAddress.equals("")) {
                     if (emlRecsHS.add(emailAddress.toLowerCase())) {
@@ -122,15 +151,29 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
 
                     String phoneNumber = getContactNumber(context, String.valueOf(contactId));
                     long timeLastCalled = getLastCallLog(context, phoneNumber);
+
                     String timeFormated = "";
                     if (timeLastCalled != 0) {
-                        timeFormated = new SimpleDateFormat("E dd MMM yyyy hh:mm:ss a", Locale.getDefault()).format(new Date());
+                        timeFormated = new SimpleDateFormat("E dd MMM yyyy hh:mm:ss a", Locale.getDefault()).format(new Date(timeLastCalled));
                     } else {
                         timeFormated = "No call log!";
                     }
 
                     Contact contact = new Contact(phoneNumber, emailAddress, name, photoUri, timeFormated);
+
+/**
+ * Evaluating total time
+ */
+
+                    long totalCallTime = getAllCallTime(context, phoneNumber);
+
+                    contact.setLastContactTime(timeFormated);
+                    contact.setTotalTime(totalCallTime);
+
+                    if (birthday != null)
+                        contact.setHasBirthday(true);
                     contactArrayList.add(contact);
+
 
                 } else {
                     //don't have any email address
@@ -140,7 +183,8 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
             cur.close();
         }
 
-        return contactArrayList;
+
+        return sortDataList(contactArrayList);
     }
 
     private long getLastCallLog(Context context, String phoneNumber) {
@@ -159,6 +203,43 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
             long time = cur.getLong(0);
             Log.e("log", String.valueOf(time) + "");
             return time;
+        }
+        cur.close();
+        return 0;
+    }
+
+    private long getAllCallTime(Context context, String phoneNumber) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+
+            return 0;
+        }
+
+        String[] projectionLogs = {
+                CallLog.Calls.DATE,
+                CallLog.Calls.DURATION
+        };
+
+
+        String filterLog = CallLog.Calls.NUMBER + " LIKE '" + phoneNumber + "'";
+
+        Cursor cur = this.context.getContentResolver().query(CallLog.Calls.CONTENT_URI, projectionLogs, filterLog, null, android.provider.CallLog.Calls.DATE + " DESC limit 1;");
+        long totalTime = 0;
+
+        if (cur != null && cur.moveToFirst()) {
+
+            for (int i = 0; i < cur.getCount(); i++) {
+                cur.move(i);
+//                long time = cur.getLong(0);
+                totalTime = totalTime + cur.getLong(1);
+            }
+//            do {
+//                long time = cur.getLong(0);
+//                totalTime = totalTime + cur.getLong(1);
+//                cur.moveToNext();
+//                Log.e("log", String.valueOf(time) + "");
+//
+//            } while (!cur.isLast());
+            return totalTime;
         }
         cur.close();
         return 0;
@@ -190,5 +271,26 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
         Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
         return Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.DISPLAY_PHOTO);
     }
+
+    public ArrayList<Contact> sortDataList(ArrayList<Contact> list) {
+//        List<Contact> list = new ArrayList<Contact>();
+        Comparator<Contact> comparator = new Comparator<Contact>() {
+            @Override
+            public int compare(Contact c1, Contact c2) {
+
+                long cLeft = c1.getTotalTime() + (1 + (c1.isHasBirthday() ? 1 : 0));
+                long cRight = c2.getTotalTime() + (1 + (c2.isHasBirthday() ? 1 : 0));
+
+                return (int) (cRight - cLeft); // use your logic
+            }
+        };
+
+        Collections.sort(list, comparator); // use the comparator as much as u want
+//        System.out.println(list);
+
+        return list;
+
+    }
+
 }
 

@@ -14,8 +14,11 @@ public class Contact {
     private String email;
     private String name;
     private String photoUri;
-
     private String lastContactTime;
+
+
+    private boolean hasBirthday = false;
+    private long totalTime;
 
     public Contact(String mobile, String email, String name, String photoUri, String lastContactTime) {
         this.mobile = mobile;
@@ -66,4 +69,19 @@ public class Contact {
         this.email = email;
     }
 
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(long totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public boolean isHasBirthday() {
+        return hasBirthday;
+    }
+
+    public void setHasBirthday(boolean hasBirthday) {
+        this.hasBirthday = hasBirthday;
+    }
 }
