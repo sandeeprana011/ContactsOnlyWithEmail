@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.rana.contactswithemail.listeners.ListenerCallBacks;
+import com.rana.contactswithemail.structure.CallLogDetail;
 import com.rana.contactswithemail.structure.Contact;
 
 import java.text.SimpleDateFormat;
@@ -142,14 +143,18 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
                     }
                 }
 
-
+                String phoneNumber = getContactNumber(context, String.valueOf(contactId));
                 // keep unique only
-                if (emailAddress != null && !emailAddress.equals("")) {
+                CallLogDetail callLogDetail = getAllCallTime(context, phoneNumber);
+//                long totalCallTime = callLogDetail.getTotalTime();
+
+
+                if (emailAddress != null && !emailAddress.equals("") && callLogDetail.getTotalTime() > 0) {
                     if (emlRecsHS.add(emailAddress.toLowerCase())) {
                         emlRecs.add(emailAddress);
                     }
 
-                    String phoneNumber = getContactNumber(context, String.valueOf(contactId));
+
                     long timeLastCalled = getLastCallLog(context, phoneNumber);
 
                     String timeFormated = "";
@@ -164,14 +169,27 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
 /**
  * Evaluating total time
  */
+//                    long totalCallTime = getAllCallTime(context, phoneNumber);
 
-                    long totalCallTime = getAllCallTime(context, phoneNumber);
+//                    String totalTimeFormatted = "";
+//                    if (timeLastCalled != 0) {
+//                        totalTimeFormatted = new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new Date(totalCallTime));
+//                    } else {
+//                        totalTimeFormatted = " Total Call Time : n/a";
+//                    }
 
+                    contact.setTotalNoOfTimesCalled(callLogDetail.getHowManyTimesCalled());
+                    contact.setTotalTime(callLogDetail.getTotalTime());
+
+                    contact.setTotalTimeFormatted("Total Call Time : " + String.valueOf(callLogDetail.getTotalTime()) + " sec");
                     contact.setLastContactTime(timeFormated);
-                    contact.setTotalTime(totalCallTime);
 
-                    if (birthday != null)
+                    if (birthday != null) {
                         contact.setHasBirthday(true);
+                        contact.setDob(birthday);
+                    } else {
+                        contact.setDob("DOB : n/a");
+                    }
                     contactArrayList.add(contact);
 
 
@@ -208,10 +226,13 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
         return 0;
     }
 
-    private long getAllCallTime(Context context, String phoneNumber) {
+    private CallLogDetail getAllCallTime(Context context, String phoneNumber) {
+
+        CallLogDetail callLogDetail = new CallLogDetail(0, 0);
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
 
-            return 0;
+            return callLogDetail;
         }
 
         String[] projectionLogs = {
@@ -222,27 +243,22 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
 
         String filterLog = CallLog.Calls.NUMBER + " LIKE '" + phoneNumber + "'";
 
-        Cursor cur = this.context.getContentResolver().query(CallLog.Calls.CONTENT_URI, projectionLogs, filterLog, null, android.provider.CallLog.Calls.DATE + " DESC limit 1;");
+        Cursor cur = this.context.getContentResolver().query(CallLog.Calls.CONTENT_URI, projectionLogs, filterLog, null, android.provider.CallLog.Calls.DATE + " DESC limit 1000;");
         long totalTime = 0;
+        int noOfTimesCalled = 0;
 
         if (cur != null && cur.moveToFirst()) {
 
-            for (int i = 0; i < cur.getCount(); i++) {
-                cur.move(i);
-//                long time = cur.getLong(0);
+            do {
                 totalTime = totalTime + cur.getLong(1);
-            }
-//            do {
-//                long time = cur.getLong(0);
-//                totalTime = totalTime + cur.getLong(1);
-//                cur.moveToNext();
-//                Log.e("log", String.valueOf(time) + "");
-//
-//            } while (!cur.isLast());
-            return totalTime;
+                noOfTimesCalled++;
+            } while (cur.moveToNext());
+            callLogDetail.setHowManyTimesCalled(noOfTimesCalled);
+            callLogDetail.setTotalTime(totalTime);
+            return callLogDetail;
         }
         cur.close();
-        return 0;
+        return callLogDetail;
     }
 
     private String getContactNumber(Context context, String contactId) {
@@ -273,15 +289,17 @@ public class AsychLoadContacts extends AsyncTask<Void, String, ArrayList<Contact
     }
 
     public ArrayList<Contact> sortDataList(ArrayList<Contact> list) {
+        this.onProgressUpdate("Sorting Data...");
 //        List<Contact> list = new ArrayList<Contact>();
         Comparator<Contact> comparator = new Comparator<Contact>() {
             @Override
             public int compare(Contact c1, Contact c2) {
 
-                long cLeft = c1.getTotalTime() + (1 + (c1.isHasBirthday() ? 1 : 0));
-                long cRight = c2.getTotalTime() + (1 + (c2.isHasBirthday() ? 1 : 0));
+                long cLeft = c1.getComparatorParam();
+                long cRight = c2.getComparatorParam();
 
                 return (int) (cRight - cLeft); // use your logic
+//                return (int) (cLeft - cRight); // use your logic
             }
         };
 

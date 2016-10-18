@@ -71,6 +71,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         holder.tEmail.setText(contact.getEmail());
         holder.tNumber.setText(contact.getMobile());
         holder.tLastCall.setText(contact.getLastContactTime());
+        holder.tDOB.setText(contact.getDob());
+        holder.tTotalTime.setText(contact.getTotalTimeFormatted());
 
 
     }
@@ -84,7 +86,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView iAvatar;
-        TextView tName, tNumber, tEmail, tLastCall;
+        TextView tName, tNumber, tEmail, tLastCall, tDOB, tTotalTime;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -93,6 +95,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             tEmail = (TextView) itemView.findViewById(R.id.contact_email);
             tNumber = (TextView) itemView.findViewById(R.id.contact_number);
             tLastCall = (TextView) itemView.findViewById(R.id.contact_lastcall);
+            tDOB = (TextView) itemView.findViewById(R.id.contact_dob);
+            tTotalTime = (TextView) itemView.findViewById(R.id.contact_total_talktime);
+
         }
     }
 

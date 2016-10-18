@@ -16,6 +16,13 @@ public class Contact {
     private String photoUri;
     private String lastContactTime;
 
+    private String dob;
+    private String totalTimeFormatted;
+
+    private int totalNoOfTimesCalled = 0;
+    //    private long totalCallTime = 0;
+//    private long compareParameter = 0;
+
 
     private boolean hasBirthday = false;
     private long totalTime;
@@ -26,6 +33,15 @@ public class Contact {
         this.name = name;
         this.photoUri = photoUri;
         this.lastContactTime = lastContactTime;
+    }
+
+    public long getComparatorParam() {
+        int birthdayCount = 0;
+        if (hasBirthday) {
+            birthdayCount = 1;
+        }
+
+        return getTotalTime() * (1 + birthdayCount) * totalNoOfTimesCalled;
     }
 
 
@@ -84,4 +100,30 @@ public class Contact {
     public void setHasBirthday(boolean hasBirthday) {
         this.hasBirthday = hasBirthday;
     }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getTotalTimeFormatted() {
+        return totalTimeFormatted;
+    }
+
+    public void setTotalTimeFormatted(String totalTimeFormatted) {
+        this.totalTimeFormatted = totalTimeFormatted;
+    }
+
+    public int getTotalNoOfTimesCalled() {
+        return totalNoOfTimesCalled;
+    }
+
+    public void setTotalNoOfTimesCalled(int totalNoOfTimesCalled) {
+        this.totalNoOfTimesCalled = totalNoOfTimesCalled;
+    }
+
+
 }
